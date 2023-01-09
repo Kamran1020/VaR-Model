@@ -1,0 +1,25 @@
+import numpy as np
+import scipy
+from scipy.stats import norm
+import pandas as pd
+import os
+import openpyxl as px
+
+df = pd.read_excel("Returns.xlsx", sheet_name="Sheet1", header=None)
+
+es_returns = df[0]
+nq_returns = df[1]
+
+portfolio_returns = (1 + es_returns) * (1 + nq_returns) - 1
+
+confidence_level = 0.95
+t = 1
+z = norm.ppf(1 - confidence_level, t)
+mean = np.mean(portfolio_returns)
+std = np.std(portfolio_returns)
+VaR = -mean + std * z
+print('VaR is: ',(VaR))
+
+portfolio_value = 1000
+monetary_value_at_risk = portfolio_value * VaR
+print(f'Monetary value at risk: {monetary_value_at_risk:.2f}')
